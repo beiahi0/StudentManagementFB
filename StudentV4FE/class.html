@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>班级信息</title>
+    <!-- 引入外部样式 -->
+
+    <link rel="stylesheet" href="./css/class.css">
+    <!-- 使用CDN引入vue的模块 -->
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.7.14"></script>
+    <!-- 引入Element UI样式 -->
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <!-- 引入Element组件库 -->
+    <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+    <!-- 引入axios组件库 -->
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+
+
+</head>
+
+<body>
+    <div id="app03">
+        <el-container>
+            <el-header>学生信息管理系统</el-header>
+            <el-container>
+                <el-aside width="120px">
+                    <el-menu default-active="2" class="el-menu-vertical-demo">
+                        <el-menu-item index="1">
+                            <i class="el-icon-menu"></i>
+                            <!-- <span slot="title">班级管理</span> -->
+
+                            <!--  -->
+                            <a href="http://101.34.58.126:5500/class.html" style="text-decoration: none;">班级管理</a>
+                            <!--  -->
+                        </el-menu-item>
+                        <el-menu-item index="2">
+                            <i class="el-icon-user"></i>
+                            <!-- <span slot="title">学生信息</span> -->
+
+                            <!--  -->
+                            <a href="http://101.34.58.126:5500/student.html" style="text-decoration: none;">学生信息</a>
+                            <!--  -->
+                        </el-menu-item>
+                        <el-menu-item index="3">
+                            <i class="el-icon-s-custom"></i>
+                            <!-- <span slot="title">讲师信息</span> -->
+                            <!--  -->
+                            <a href="http://101.34.58.126:5500/teacher.html" style="text-decoration: none;">教师信息</a>
+                            <!--  -->
+                        </el-menu-item>
+                    </el-menu>
+                </el-aside>
+                <el-container>
+                    <!-- 主窗体 -->
+                    <el-main>
+                        <!-- 面包屑导航 -->
+                        <el-breadcrumb separator-class="el-icon-arrow-right">
+                            <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
+                            <el-breadcrumb-item>班级管理</el-breadcrumb-item>
+                        </el-breadcrumb>
+                        <!-- 导航表单 -->
+                        <el-form :inline="true" style="margin-top: 20px;">
+                            <el-row>
+                                <el-col :span="8" style="text-align: left;">
+                                    <el-form-item label="请输入查询条件：">
+                                        <el-input v-model="inputStr" placeholder="输入条件"></el-input>
+                                    </el-form-item>
+                                </el-col>
+
+                                <el-col :span="16" style="text-align: right;">
+                                    <el-button-group>
+                                        <el-button type="primary" icon="el-icon-search"
+                                            @click="queryClasses()">查询</el-button>
+                                        <el-button type="primary" icon="el-icon-tickets"
+                                            @click="getAllClasses()">全部</el-button>
+                                        <el-button type="primary" icon="el-icon-circle-plus-outline"
+                                            @click="addClass()">添加</el-button>
+                                    </el-button-group>
+                                </el-col>
+                            </el-row>
+                        </el-form>
+                        <!-- 展示数据表格 -->
+                        <el-table :data="pageClasses" border style="width: 100%" size="mini"
+                            @selection-change="handleSelectionChange">
+                            <el-table-column type="selection">
+                            </el-table-column>
+
+                            <el-table-column type="index" label="序号" align="center" width="60px">
+                            </el-table-column>
+
+                            <el-table-column prop="classNo" label="班级号" align="center" width="200px">
+                            </el-table-column>
+
+                            <el-table-column prop="className" label="班级名称" align="center" width="600px">
+                            </el-table-column>
+
+                            <el-table-column label="操作" width="150px" align="center">
+                                <!-- scope用来调用scope.row传递这一行的数据 -->
+                                <template slot-scope="scope">
+                                    <el-button @click="viewClass(scope.row)" type="success" icon="el-icon-more"
+                                        size="mini" circle></el-button>
+                                    <el-button @click="updateClass(scope.row)" type="primary" icon="el-icon-edit"
+                                        size="mini" circle></el-button>
+                                    <el-button @click="deleteClass(scope.row)" type="danger" icon="el-icon-delete"
+                                        size="mini" circle></el-button>
+                                </template>
+                            </el-table-column>
+                        </el-table>
+                        <!-- 展示数据的表格 -->
+                        <!-- 分页 -->
+                        <!-- position: fixed; -->
+                        <el-row style="margin-top: 10px;">
+                            <el-col :span="8" style="text-align: left;">
+                                <el-button @click="deleteClasses()" type="danger" icon="el-icon-delete"
+                                    size="mini">批量删除</el-button>
+                            </el-col>
+
+                            <el-col :span="16" style="text-align: right;">
+                                <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange"
+                                    :current-page="currentpage" :page-sizes="[8, 10, 50, 100]" :page-size="pagesize"
+                                    layout="total, sizes, prev, pager, next, jumper" :total="total">
+                                </el-pagination>
+                            </el-col>
+                        </el-row>
+                        <!-- 弹出框的学生明细表单 -->
+                        <el-dialog :title="dialogTitle" :visible.sync="dialogVisible" width="60%"
+                            style="text-align: left;" :close-on-click-modal="false"
+                            @close="closeDialogForm('classForm')">
+
+                            <el-form :model="classForm" :inline="true" :rules="rules" style="margin-left: 20px;"
+                                ref="classForm" label-width="100px" label-position="right" size="mini">
+
+                                <el-form-item label="班级号：" prop="classNo">
+                                    <el-input v-model="classForm.classNo" :disabled="isEdit||isView"
+                                        suffix-icon="el-icon-edit"></el-input>
+                                </el-form-item>
+
+                                <el-form-item label="班级名：" prop="className">
+                                    <el-input v-model="classForm.className" :disabled="isView"
+                                        suffix-icon="el-icon-edit"></el-input>
+                                </el-form-item>
+
+                            </el-form>
+                            <span slot="footer" class="dialog-footer">
+                                <el-button type="primary" size="mini" v-show="!isView"
+                                    @click="submitClassForm('classForm')">确 定</el-button>
+                                <el-button type="info" size="mini" @click="closeDialogForm('classForm')">取
+                                    消</el-button>
+                            </span>
+                        </el-dialog>
+                    </el-main>
+                    <el-footer style="height: 30px">学生信息管理系统 ShenChengHou</el-footer>
+                </el-container>
+            </el-container>
+        </el-container>
+    </div>
+</body>
+
+</html>
+<!-- 引入Vue代码 -->
+<script src="./js/class.js"></script>

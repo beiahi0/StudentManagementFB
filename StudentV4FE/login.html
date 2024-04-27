@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <!-- 引入外部样式 -->
+    <link rel="stylesheet" href="./css/login.css">
+    <!-- 使用CDN引入vue的模块 -->
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.7.14"></script>
+    <!-- 引入Element UI样式 -->
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <!-- 引入Element组件库 -->
+    <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+    <!-- 引入axios组件库 -->
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+</head>
+
+<body>
+    <div id="app_login">
+        <!-- <el-container> -->
+            <el-header style="display: flex;align-items: center;justify-content: center;">
+                <img style="width: 40px;height: 40px;border-radius: 50%;margin-right: 10px;" src="./image/title.jpg" alt="">
+                欢迎您的登录
+            </el-header>
+            <!-- css样式每一个结束后要以;结尾 -->
+            <!-- 写样式写道style里面，这是行内样式,不想写到行内就写class="自己起的名字" ，任选-->
+            <!-- style="width: 100%;display:flex; justify-content: center" -->
+            <div class="box">
+                <!-- label-width是设置左侧的表单标题的宽度  不是整体的 -->
+                <el-form class="form"  :model="adminForm" :rules="rules" ref="adminForm" label-width="80px"> 
+
+                    <el-form-item label="用户名" prop="name">
+                        <el-input v-model="adminForm.name"></el-input>
+                    </el-form-item>
+
+                    <el-form-item label="密码" prop="pass">
+                        <el-input type="password" v-model="adminForm.pass" autocomplete="off"></el-input>
+                    </el-form-item>
+
+                    <div class="btn">
+                        <el-button type="primary" @click="submitForm('adminForm')">提交</el-button>
+                        <el-button @click="resetForm('adminForm')">重置</el-button>
+                    </div>
+
+                    <a href="http://101.34.58.126:5500/regeister.html" style="text-decoration: none;">没有账号？点击注册一个</a>
+
+                </el-form>
+                
+            </div>
+    <!-- </el-container> -->
+    </div>
+
+</body>
+
+</html>
+<script src="./js/login.js">
+
+</script>
+<!-- 记得加scoped,不然你下面写的这些样式就都是全局的，页面多的时候有重名的会相互影响，样式错乱 -->
+<style scoped>
+
+    /* .你的class类名就行 */
+    .box {
+        width: 100%;
+        display:flex; 
+        justify-content: center;
+    }
+    .form {
+        width: 500px;
+        background-color: #fff;
+        /* 设置距离顶部多少距离  auto代表水平居中的意思 */
+        margin: 100px auto; 
+        /* 设置内边距 */
+        padding: 20px;
+        box-sizing: border-box;
+        /* 设置白色的盒子的四周圆角 */
+        border-radius: 5px;
+    }
+    /* 想要修改element ui 组件的样式，可以直接检查元素找到他们内部封装的class类名，自己写样式修改，如果修改不过来就在前面加>>>
+    也可以加!important  修改不过来的原因是比重不够 */
+    /* >>>.el-form-item__content {
+
+    } */
+    .btn {
+        display:flex; 
+        justify-content: center;
+    }
+
+</style>

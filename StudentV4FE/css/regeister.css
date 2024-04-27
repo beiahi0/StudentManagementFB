@@ -1,0 +1,22 @@
+
+* {
+    margin: 0;
+    padding: 0;
+}
+html,
+body {
+    width: 100%;
+    height: 100%;
+}
+#app_login {
+    width: 100%;
+    height: 100%;
+
+    /* background的其中一个属性是background-repeat, 这是连用了，这个属性的意思是防止重复*/
+    /* background-image 设置背景图片的*/
+    /* 下面这行是background-image 和 background-repeat的连用，是background的复合属性 */
+    background: url('../image/bgc.png') no-repeat; 
+    background-size: 100% 100%;
+    color: #333;
+    /* 快捷键  tab是往后  shift加tab是往前缩进 先用鼠标选中 */
+}
